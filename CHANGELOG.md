@@ -6,8 +6,8 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
-* **v0.30.1** is the build on the test card for testing.
+* **Latest build: v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
+* **v0.33** is the build on the test card (v0.30.1 ran 70 min on hardware with no crash).
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
 * Notes on the version line: v0.15 to v0.31 are documented in detail. v0.1 to v0.9 are not recorded in the design notes or git (details not recorded). v0.10 to v0.14 are recorded only in short build notes.
@@ -21,6 +21,20 @@ These are walls of the platform, not bugs to be fixed later.
 * **No swap and no zram.** The device kernel is built without swap and compressed RAM, so RAM cannot be stretched. Track count and loop memory are bounded by real RAM (32 tracks shipped).
 * **No licensing bypass.** The layer does not touch licensing or the boot chain. Features gated by the stock product (for example keygroup programs and MIDI tracks) stay out of reach.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
+
+---
+
+## v0.34 — Export + Sync (2026-11-06, branch v034-export, not merged)
+
+Two new tiles in KAOS TOOLS 2 (two of the hidden slots): **Export** (tile 12) and **Sync** (tile 13); slot 14 stays hidden. Version line: KAOSAMPLE v0.34.
+
+* **Export: take a project to an MPC X / Live / One / Key or the MPC software.** Pick What (all sequences / current sequence / current track) and Stems (off / on), press S1. It writes `KAOSAMPLE/export/<project>-<date>/` with one Standard MIDI File per sequence (type 1, one track per KAOSAMPLE track, tempo and meter, 960 pulses per quarter), one `.xpm` drum program per drum track with its samples copied next to it (level, pan, tune, envelopes, filter, mute targets, up to four velocity layers), a README with the load steps and a manifest. Notes are `36 + pad` so the MIDI and the program always agree. The card's free space is checked first, S1 again cancels (the half-written package is removed), nothing is written outside `KAOSAMPLE/`. Stems on runs the v0.22 Stems job after the package. A standalone `.xpj` is not written: the format cannot be proven without a target device, so this is the always-safe package.
+* **Sync: the missing MIDI clock parts.** The stock already has MIDI Sync Out and Sync In (Settings > MIDI: tempo, Start / Stop, SPP, Continue, one port at a time), so none of that is duplicated. Sync adds: **clock + Start / Stop / SPP / Continue on a second port** (DIN and / or USB) generated from the stock transport with lower jitter than the stock's clock (lab: rms 4 to 300 us against the stock's 0.5 to 1.2 ms), a **phase Offset** row, and a **monitor** (incoming tempo smoothed to 0.1 BPM, tick jitter, Start / Stop / Continue / SPP counters, the stock's own clock out). The generator never adds a second clock to a port the stock is already clocking.
+* Limits: hardware untested; no real MPC X / Live / One was available to load the package; the USB clock path could not be seen on a host in the lab; the +9.5 ms default offset is a lab measurement; clock in is a monitor (the stock follows the clock).
+
+**Status**
+* Emulator only (QEMU lab, Mac mini). **Hardware untested.** Not merged.
+* Checked: host tests (export 1,424, sync 3,409 checks, 0 fail; finder 152, ideas 572,854); all 15 KAOS TOOLS 2 tiles open from the real panel path; export packages validated by an independent reader against the engine's own note dump (0 problems), cancel, refusal on a full card, Stems on; Sync on the lab DIN jack (yield, phase against the stock clock, incoming 110.0 / 96.3 BPM, SPP + Continue); 10.5 min soak with no crash and the same process.
 
 ---
 

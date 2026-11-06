@@ -6,7 +6,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.31** (Color, Duck, Reference). Built and finished in the emulator; being merged into the main line.
+* **Latest build: v0.31.1** (menu audit: switches with messages, iPad tile removed) on top of v0.31 (Color, Duck, Reference). Emulator-tested.
 * **v0.30.1** was the first build in hardware testing.
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
@@ -23,6 +23,14 @@ These are walls of the platform, not bugs to be fixed later.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
 
 ---
+
+## v0.31.1 — Menu audit (2026-11-06)
+
+* Reported from the unit: Record, Meter and Header "do nothing", iPad does not work. Every tile of the three icon menus was checked against its handler (table in `design/v0311.md`).
+* **Record, Theme, Meter, Header are switches**: each shows a 1.5 s message ("Meter: On", "Record: Overdub", ...) and a tile that is On is drawn with a bright border and a green marker. Record really changes what a plain SEQ REC press does (overwrite eraser or plain overdub). The Meter bar is bigger and holds the peak briefly. Header is On by default, so its first push turns it Off.
+* **iPad tile removed** (it only showed an address). About and Close moved up one slot each. Remap ids stay valid.
+* Stock screens: "Song" removed (did nothing in the emulator); all other stock screens open. Two-word names no longer clipped. The DATA wheel skips empty slots on every menu page.
+* Emulator only. Hardware untested.
 
 ## v0.31 — Color + Duck + Reference (2026-11-05)
 

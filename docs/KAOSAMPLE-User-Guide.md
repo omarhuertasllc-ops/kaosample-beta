@@ -1,10 +1,10 @@
 ---
-title: "KAOSAMPLE v0.31 User Guide"
+title: "KAOSAMPLE v0.31.1 User Guide"
 subtitle: "A feature layer for the stock MPC Sample app (firmware 1.3.0.12)"
 author: "Omar Huertas LLC / kaosbeatz"
 ---
 
-# KAOSAMPLE v0.31 User Guide
+# KAOSAMPLE v0.31.1 User Guide
 
 **Tester beta. Private copy, please do not share or repost.**
 
@@ -151,9 +151,20 @@ In short: **SHIFT + SCREEN 3 > KAOS TOOLS > More > KAOS TOOLS 2**.
 
 ### First menu: KAOSAMPLE
 
-Mixer, Pad Mixer, Tracks, Track Mute, Sequences, Song, Track View, Pad View, Record, Theme, Meter, Header, iPad, About, Close.
+Mixer, Pad Mixer, Tracks, Track Mute, Sequences, Song, Track View, Pad View, Record, Theme, Meter, Header, About, Close, and **More** (opens KAOS TOOLS). The old **iPad** tile was removed in v0.31.1: it only showed an address and did nothing.
 
-This guide covers **Track View** and **Pad View** (4.6), **Tracks** and **Track Mute** (4.7), **Mixer** (explode, 4.8) and **About** (monitor, 4.20). The others (Pad Mixer, Sequences, Song, Record, Theme, Meter, Header, iPad) are not described in the notes for this build, so they are not covered here.
+**Four tiles are switches, not pages.** Push one and it flips at once; the menu stays open. Each switch shows a **1.5 second message** in the middle of the screen, and a switch that is **On** is drawn with a bright border and a green marker in the tile corner. The big info box at the bottom right of the menu shows the state of the tile you are on.
+
+| Switch | What it does | Message |
+|---|---|---|
+| **Record** | Chooses what a plain **SEQ REC** press does. **Overwrite** (default): REC erases the old notes the loop passes over, and **SHIFT + REC** adds without erasing. **Overdub**: REC adds without erasing, and **SHIFT + REC** erases. The setting is read at the next REC press. | "Record: Overdub" or "Record: Overwrite" |
+| **Theme** | Each push steps to the next colour theme (Stock, MPC60, MPC3000, MPC2000XL, MPC1000, MPC Live). It tints the whole screen, the stock screens too. | "Theme" and the theme name |
+| **Meter** | A small output level bar at the bottom right of every screen (green, red near the top; it holds the peak for about 0.3 s). It follows the MPC's main output. | "Meter: On" or "Meter: Off" |
+| **Header** | A one-line strip "S01 T01 A01" (sequence, track, pad) under the tabs of the stock screens. It is only drawn where that strip is empty, and only when the project has at least one track. Default is On. | "Header: On" or "Header: Off" (when the project has no tracks: "shows when a project has tracks") |
+
+These four switches are not remembered after a restart (Header starts On, the rest start Off or Overwrite).
+
+This guide covers **Track View** and **Pad View** (4.6), **Tracks** and **Track Mute** (4.7), **Mixer** (explode, 4.8) and **About** (monitor, 4.20). The others (Pad Mixer, Sequences, Song) are not described in the notes for this build, so they are not covered here.
 
 ### KAOS TOOLS (second menu)
 
@@ -1550,6 +1561,6 @@ These are walls of the platform, not bugs to be fixed later.
 ## 7.4 What is not in this build
 
 * The **KAOSAMPLE Companion** Mac app (card status, log reader, kit sync, stems browser, project backups) is a separate project. It is not part of this tester build and has not been used with a real card yet.
-* This guide does not cover the Pad Mixer, Sequences, Song, Record, Theme, Meter, Header, iPad, MIDI, Programs and Stock screens tiles, because the notes for this build do not describe their controls.
+* This guide does not cover the Pad Mixer, Sequences, Song, MIDI, Programs and Stock screens tiles, because the notes for this build do not describe their controls.
 
 Thank you for testing KAOSAMPLE. Your reports on the real machine are what turn this beta into a release.

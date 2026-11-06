@@ -6,8 +6,8 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
-* **v0.30.1** was the first build in hardware testing.
+* **Latest build: v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
+* **v0.30.1** is the build on the test card for testing.
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
 * Notes on the version line: v0.15 to v0.31 are documented in detail. v0.1 to v0.9 are not recorded in the design notes or git (details not recorded). v0.10 to v0.14 are recorded only in short build notes.
@@ -21,6 +21,20 @@ These are walls of the platform, not bugs to be fixed later.
 * **No swap and no zram.** The device kernel is built without swap and compressed RAM, so RAM cannot be stretched. Track count and loop memory are bounded by real RAM (32 tracks shipped).
 * **No licensing bypass.** The layer does not touch licensing or the boot chain. Features gated by the stock product (for example keygroup programs and MIDI tracks) stay out of reach.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
+
+---
+
+## v0.33 — Finder + Ideas (2026-11-06)
+
+Two new tiles in KAOS TOOLS 2 (the two hidden slots): **Finder** (tile 3) and **Ideas** (tile 11). Version line: KAOSAMPLE v0.33.
+
+* **Finder: find samples by sound.** Pick a pad, press S1: the 16 closest samples on the card, in the kits / stems folders and in the open project, nearest first (class, length, brightness, loudness, pitch). Filters: Class (kick / snare / hat / perc / one-shot / loop), Pitch (+-1 to 24 semitones), Length (shorter / longer). S3 auditions at -6 dB (press again to stop), S2 loads the result onto the pad as one undo step. The index (`KAOSAMPLE/finder/index.txt`) is built in the background, 20 files at a time, and only re-reads new or changed files.
+* **Ideas: pattern ideas.** Styles boom-bap, trap, house, break, lofi and melodic; Density 1-5, Seed (same seed = same pattern), Bars 1 / 2 / 4, Target current or new track. S1 Make writes the notes into the sequence as one undo step, S2 Again undoes it and makes a new seed, S3 undoes the idea. Drum notes follow the pad classes of the kit; melodies use the Perform scale kit when one is built, otherwise C minor pentatonic; the Groove template (or the style's swing) is applied.
+* Limits: a new-track Make leaves the track when you undo the idea (the stock cannot undo a track create from a group). Notes outside the sequence length are not written.
+
+**Status**
+* Emulator only (QEMU lab, Mac mini). **Hardware untested.**
+* Checked: host tests (finder 152, ideas 572,854 checks, 0 fail); all KAOS TOOLS 2 tiles open from the real panel path; Ideas lab run 101 / 101; Finder search / filters / audition / load / undo; 10.5 min soak (244 actions) with no crash and the same process.
 
 ---
 
@@ -90,7 +104,7 @@ Limits:
 * Born from a lab case where the stock app deleted sample files from a swapped-in project. The exact cause is not understood. The template folder on the card is never touched, so it is the copy to trust.
 * The relaunch takes about 35 to 40 seconds of black screen.
 
-Status: emulator-tested. In hardware testing.
+Status: emulator-tested. On the test card for testing. In main.
 
 ## v0.30 — Files + Templates (2026-11-05)
 

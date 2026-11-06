@@ -15,6 +15,9 @@ It runs from the SD card, in RAM only, and changes nothing inside the MPC.
 ## Download
 Get the latest zip from **[Releases](../../releases)**. Full instructions are in `READ-ME-FIRST.txt` inside the zip.
 
+## User guide
+Full manual: [docs/KAOSAMPLE-User-Guide.md](docs/KAOSAMPLE-User-Guide.md) (PDF in the release and in the zip).
+
 ## Install
 1. Back up your SD card (copy the whole card to your computer).
 2. Copy the `autorun` folder from the zip to the **top** of the card. Don't rename or edit any file.

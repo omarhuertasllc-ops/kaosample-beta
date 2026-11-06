@@ -7,7 +7,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 ## Current status
 
 * **Latest build: v0.31** (Color, Duck, Reference). Built and finished in the emulator; being merged into the main line.
-* **v0.30.1** is the build on Omar's card for testing.
+* **v0.30.1** was the first build in hardware testing.
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
 * Notes on the version line: v0.15 to v0.31 are documented in detail. v0.1 to v0.9 are not recorded in the design notes or git (details not recorded). v0.10 to v0.14 are recorded only in short build notes.
@@ -54,7 +54,7 @@ Limits:
 * Born from a lab case where the stock app deleted sample files from a swapped-in project. The exact cause is not understood. The template folder on the card is never touched, so it is the copy to trust.
 * The relaunch takes about 35 to 40 seconds of black screen.
 
-Status: emulator-tested. On Omar's card for testing. In main.
+Status: emulator-tested. In hardware testing.
 
 ## v0.30 — Files + Templates (2026-11-05)
 

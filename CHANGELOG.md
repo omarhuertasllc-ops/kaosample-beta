@@ -6,7 +6,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.31.1** (menu audit: switches with messages, iPad tile removed) on top of v0.31 (Color, Duck, Reference). Emulator-tested.
+* **Latest build: v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
 * **v0.30.1** was the first build in hardware testing.
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
@@ -21,6 +21,34 @@ These are walls of the platform, not bugs to be fixed later.
 * **No swap and no zram.** The device kernel is built without swap and compressed RAM, so RAM cannot be stretched. Track count and loop memory are bounded by real RAM (32 tracks shipped).
 * **No licensing bypass.** The layer does not touch licensing or the boot chain. Features gated by the stock product (for example keygroup programs and MIDI tracks) stay out of reach.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
+
+---
+
+## v0.32 — Audio, Perform, Files, Undo (2026-11-06)
+
+Merge of two builds, "audio / perform" (v0.32a) and "files / undo / persistence" (v0.32b). Version line: KAOSAMPLE v0.32.
+
+**Audio and perform**
+* **Duck from a set of tracks**, plus MIDI-in notes and arp / Perform hits as triggers (Color page).
+* **Color is smoother**: parameter changes no longer click, and wow / flutter stay aligned with the dry signal.
+* **Looper**: line-in recording, tap before or after the EQ / Color / Loudness chain, free-run, tempo-follow stretch (WSOLA), meters other than 4/4 (3/4, 6/8, 5/4, 7/8, 12/8). Exporting a loop no longer freezes the screen (187 ms down to 17 ms).
+* **Perform**: Arp and Keys together; gate cut (pad parameter, Sample Play 2/3: 4.0 s down to 0.33 s); Pad MIDI In is switched on at boot.
+
+**Files, undo, persistence**
+* **Jump in lists** with SHIFT+DATA also in FX Select; **default template** from any project (not only a fresh one) and a STRIP option for the starter kit (81 MB down to 8.6 MB).
+* **Sample Record undo / redo** works on the record screen itself (SHIFT+MINUS / SHIFT+PLUS). Undo waits until the stock history has the recording (about 1.2 s after you stop).
+* **Mute scenes, slices and chords are saved with the project** (sidecar file next to the project, copied to the card; handled on Load, Save As, New Project, New from template).
+* **Color undo history is saved** and comes back after a restart.
+
+**Limits**
+* Remembering the last browser folder across restarts is not possible safely (the stock stores nothing and key replay is unsafe). The 5/10/20 jump keys shorten the walk instead.
+* Sample Record undo is refused until the stock history entry exists (about 1.2 s); an armed recording that is never triggered keeps undo blocked until you leave the screen.
+* Time signature lists are not decoded; meters come from the engine's bar length. The loop is not processed twice when tapped after the chain, and is not limited (hard clip at full scale).
+* Stock inserts, per-track audio, swap and licence limits from "Known hard limits" still apply.
+
+**Status**
+* Emulator only (QEMU lab). **Hardware untested.**
+* Checked: all host tests pass; every KAOS TOOLS 2 tile and the first-menu switches opened from the real panel path; 14.5 min soak (824 + 82 random actions) with no crash, same process, memory flat (about 630 to 645 MB); Sample Record record / undo / redo hammered 20 times, 20 of 20 correct.
 
 ---
 

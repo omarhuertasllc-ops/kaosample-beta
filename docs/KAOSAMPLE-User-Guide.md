@@ -1,10 +1,10 @@
 ---
-title: "KAOSAMPLE v0.31.1 User Guide"
+title: "KAOSAMPLE v0.32 User Guide"
 subtitle: "A feature layer for the stock MPC Sample app (firmware 1.3.0.12)"
 author: "Omar Huertas LLC / kaosbeatz"
 ---
 
-# KAOSAMPLE v0.31.1 User Guide
+# KAOSAMPLE v0.32 User Guide
 
 **Tester beta. Private copy, please do not share or repost.**
 
@@ -59,16 +59,17 @@ Made by Omar Huertas LLC / kaosbeatz. It uses its own code and its own artwork.
 | Looper (Loop Rec) | 0.29 | Emulator only |
 | Files and templates | 0.30 / 0.30.1 | Emulator only |
 | Color, Duck, Reference A/B | 0.31 | Emulator only |
+| Duck sources, Color smoothing and undo memory, Looper line-in / free-run / tempo stretch / export, Perform Arp + Keys, Gate, Pad MIDI In at boot, Files (Jump in FX list, default template, Starter STRIP), Sample Record undo, project sidecar | 0.32 | Emulator only |
 
 ## 1.4 Safety notes
 
 * **Back up the card first** (see above). Back up your important projects to your computer as well.
 * **Do not rename or edit** the files in the `autorun` folder. The MPC checks them.
 * **Delete track cannot be undone.** Use Snapshots to get a deleted track back.
-* **Record a sample = no undo yet.** Recording a sample cannot be undone by KAOSAMPLE.
+* **Record a sample: undo works on the Sample Record screen** (SHIFT + MINUS / SHIFT + PLUS). Undo waits about 1.2 s after you stop recording, so the take can settle first.
 * **Stock insert effects on tracks and master do nothing** on this unit (a limit of the MPC Sample, not a bug). Use KAOSAMPLE's own master EQ, Loudness and Color instead. Insert effects on **pads** do work.
 * **Two quick restarts = stock app.** KAOSAMPLE restarts the MPC app itself for a few jobs (restoring a snapshot, New from template). If the app exits twice less than 2 minutes apart, KAOSAMPLE switches itself off and the stock app runs. KAOSAMPLE refuses those jobs until the app has been up for about 2 minutes.
-* **Some data lives on the card, not in the project.** Slice sets, mute scenes, recorded mutes, grooves and chord sets are kept on the card, not inside the project file. If you move a project to another card, they do not come along.
+* **Some data lives on the card, not only in the project.** Grooves and the Color settings are kept on the card. Mute scenes, recorded mutes, slice sets and chord sets are saved with the project (a sidecar file, see 4.7) and also kept on the card, and they come back when the project loads. If you move a project to another card, the card copies do not come along.
 
 ---
 
@@ -266,7 +267,8 @@ The "PAD FX x2", "PAD BANK" and "SHIFT + PAD BANK" combos copy habits Omar repor
 | Slice view | SHIFT + DATA turn = destination start pad. SHIFT + pad = extract the selected slice to that pad |
 | FX list | SHIFT + ERASE = clear the name filter |
 | Groove, Retro Rec, Clean Up, Looper | SHIFT + DATA turn = previous or next track |
-| Files (in stock Sample Select and Project Select) | SHIFT + DATA turn = jump 5, 10 or 20 rows |
+| Files (in stock Sample Select, Project Select and FX Select) | SHIFT + DATA turn = jump 5, 10 or 20 rows |
+| Sample Record screen | SHIFT + MINUS / SHIFT + PLUS = undo / redo a sample recording (once it has settled) |
 | Programs | SHIFT + DATA push = Save kits (not covered here) |
 
 ---
@@ -372,7 +374,7 @@ All three live on one page: **KAOS TOOLS 2 > Color**.
 * **Vinyl:** warmth, mono below about 120 Hz (a tighter low end), and crackle (random clicks).
 * **Mix at 0 is exactly off and costs nothing.** Mix 0 means the sound is bit-for-bit unchanged.
 
-**Duck** (sidechain) dips the output when a chosen track or pad plays, like a kick pumping a pad. Depth up to 24 dB, attack 0.1 to 50 ms, release 10 to 1000 ms, three curve shapes.
+**Duck** (sidechain) dips the output when a chosen track, a set of tracks or a pad plays, like a kick pumping a pad. MIDI-in notes and arp hits can trigger it too. Depth up to 24 dB, attack 0.1 to 50 ms, release 10 to 1000 ms, three curve shapes.
 
 **Reference A/B** plays a WAV from your own music next to your mix, **matched by loudness** (a LUFS-style measure) so louder does not fool you into thinking it sounds better. A trim knob lets you nudge the match.
 
@@ -388,10 +390,11 @@ Where it sits in the signal path: Color goes before Loudness (so the limiter cei
 
 ### Step by step: Duck
 
-1. Pick the **Duck src** row. Set **K1 (Source)** to **Track** (any note of that track ducks) or **Pad** (one pad on that track). Then choose the track on **K2** and the pad on **K3**.
+1. Pick the **Duck src** row. Set **K1 (Source)** to **Track** (any note of that track ducks), **Pad** (one pad on that track) or **Set** (any note of any track in the set ducks). For Track and Pad, pick the track on **K2** and the pad on **K3**. For Set, K2 moves the cursor along the tracks and K3 puts the cursor's track in or out of the set.
 2. Pick the **Duck env** row. Set **Depth, Attack, Release**. Pick the curve on the **Shape** row.
 3. Push **DATA** on a duck row to fire a test duck so you can hear it without playing.
 4. Watch the "duck" meter on the page.
+5. Optional: on the **Duck in** row, **K1** adds MIDI-in notes (played on the current track, which must be in the set), **K2** adds arp and Perform hits, and **K3** sets all or none of the tracks in the set.
 
 ### Step by step: Reference A/B
 
@@ -409,7 +412,8 @@ Where it sits in the signal path: Color goes before Loudness (so the limiter cei
 | Tape | Sat | Bump | HF (high roll-off) |
 | Wow/Flut | Wow | Flutter | - |
 | Vinyl | Warmth | Crackle | Mono below 120 Hz on / off |
-| Duck src | Source (Off, Track, Pad) | Track | Pad |
+| Duck src | Source (Off, Track, Pad, Set) | Track (K2 moves the cursor in Set) | Pad, or in / out of the set (Set) |
+| Duck in | MIDI in on / off | Arp / Perform on / off | All or none of the set |
 | Duck env | Depth | Attack | Release |
 | Shape | Linear, Exp, S-curve | - | - |
 | Ref | File | Trim | - |
@@ -428,14 +432,14 @@ For on / off knobs, the upper half of the knob is ON.
 ### Tips and limits
 
 * **Setting is saved** and comes back after a restart. The **reference file name is remembered but never loaded on its own**, and A/B **always starts on your mix**.
-* **Undo/redo (32 steps) is lost at restart.** Only the current state is saved.
-* Duck sources are the duck track's notes and live pad hits on that track. It does **not yet** duck from other tracks, the arp or MIDI input.
+* **Undo/redo (32 steps) is saved too** (in `KAOSAMPLE/fxundo.txt`) and comes back after a restart.
+* Duck sources: the notes of a set of tracks (muted tracks do not duck), live pad hits on a track in the set, MIDI-in notes (played on the current track) and arp / Perform hits, each if its switch is on.
 * Duck from the sequence reacts within about 2.6 ms of the true note time. Live pad hits react within 2.9 ms.
 * The loudness meter is **LUFS-style, not a certified meter.** It needs a few seconds of music to settle. Until then the reference plays at the trim only.
 * If the reference is very loud and would clip, its level is capped and the page says **"peak cap"**. The match is then not exact.
 * If you move the master volume, the matched reference follows slowly.
 * The reference list shows up to 48 files. WAV only: 16, 24 or 32-bit PCM, or 32-bit float. Mono or stereo, any sample rate.
-* Fast knob sweeps on Color can **zipper** slightly. High Wow or Flutter with a middle Mix can comb a little.
+* Color settings glide to their new values (about 12 ms; wow and flutter about 60 ms), so fast knob sweeps no longer click. A very fast sweep is softened on purpose. The dry and wet signals stay aligned at any Mix.
 * Stem renders include Color but **not** the duck or the reference (chapter 4.11).
 
 ---
@@ -472,7 +476,7 @@ For on / off knobs, the upper half of the knob is ON.
 * **Delete track cannot be undone.** KAOSAMPLE refuses ("Cannot undo - Delete Track: use Snapshots").
 * **Explode** is only partly undoable (the copied notes go back, the empty tracks stay).
 * **EQ, Loudness, Color and Duck settings are not in this list.** Color has its own undo (chapter 4.3).
-* **Recording a sample cannot be undone** yet.
+* **Sample recording can be undone** on the Sample Record screen (SHIFT + MINUS / SHIFT + PLUS). Undo waits about 1.2 s after you stop, and refuses while a recording is still armed or running ("tap the pad to stop first").
 * The stock history holds about 512 steps. Old steps scroll off.
 * Insert effects: Undo does not reliably remove the effect. Use ERASE on the insert row (chapter 4.10).
 * If the stock app shows a red "Command failed" box, press SCREEN 1, 2 or 3 to clear it. This can happen if you redo past a track create with SHIFT + PLUS.
@@ -672,7 +676,7 @@ Open them from the first menu (**SHIFT + SCREEN 3**): **Track View** or **Pad Vi
 * **Delete cannot be undone.** Restore with Snapshots. Delete refuses the last track, and refuses a track that **shares its kit** with another track. The message says "kit shared with N track(s): save+reload". Save and reload the project, then delete.
 * **Solo works per program (kit).** Tracks that share a kit solo together.
 * Renaming a track that shares a kit with another track changes the name without an undo step.
-* **Mute scenes and recorded mutes live on the card**, not in the project.
+* **Mute scenes, recorded mutes, slices and chord sets are saved with the project** (in `kaos-sidecar.txt` next to the project) and copied to the card. They come back when the project loads.
 * Pad mutes are recorded for the **current track only**. Scenes are track mutes only.
 * **32 tracks maximum.** With full kits, 32 tracks used about 1.7 GB of memory in the lab. The real RAM of the unit is recorded in `mem-probe.txt` (chapter 5).
 * Track create cannot be undone (the stock history refuses it).
@@ -776,7 +780,7 @@ Open **KAOS TOOLS > Sample Tools**. It shows the **Slice view** of the last pad 
 * Chop guard: at most 128 slices, never shorter than the minimum, and a chop that would break the rule is refused (the old slices stay).
 * **The stock Tail is a loop tail, not a fade.** Use Fade for a fade. Fade **adds a sample to the project** (a new file named `name_fadeN.wav`).
 * **Extract writes layer 1 only.** A pad with samples on layers 2 to 4 keeps them.
-* **Slice sets are stored on the card, not in the project** (24 sets kept). They are lost with the card file.
+* **Slice sets are saved with the project** (sidecar file) and also kept on the card (24 sets). Loading the project brings them back.
 * The Slice view reads the WAV from disk. A missing or odd-format file shows "wav not readable".
 * Detection is tuned on test hits. Noisy loops need Sensitivity and Min length tweaks.
 * Slice sets are matched by file name and length. Two different WAVs with the same name and length would share one set.
@@ -1198,9 +1202,10 @@ DATA turn picks the row. SHIFT + DATA turn picks the previous or next track.
 Turns the 16 pads of your drum program into a **playable instrument** by copying the source pad's sample onto all 16 pads at different pitches. The source sample is treated as **C**.
 
 * **Scale:** pad N plays scale degree N. 16 scales: Chromatic, Major, Minor, Dorian, Phrygian, Lydian, Mixolydian, Locrian, Harmonic minor, Melodic minor, Major pentatonic, Minor pentatonic, Blues, Whole tone, Diminished (whole-half), Phrygian dominant. Any root and octave.
-* **Chord:** each pad plays a chord. Diatonic triads or 7ths, or **your own set** (16 chord shapes, one per pad). Own sets are saved per sequence on the card.
+* **Chord:** each pad plays a chord. Diatonic triads or 7ths, or **your own set** (16 chord shapes, one per pad). Own sets are saved per sequence on the card and in the project sidecar.
 * **Arp:** an arpeggiator on a scale kit. Patterns Up, Down, UpDown, Random, AsPlayed. Rates 1/4 to 1/32 plus triplets. Gate, 1 to 3 octaves, latch, chord expand.
 * **Keys:** play the pad program from a **MIDI keyboard** over 16, 32 or 48 pads.
+* **Arp + Keys:** keys on banks E to G (at the default 48-pad span) and the arp on bank H, both at once.
 
 The pitch changes use the normal pad tuning, so pads play, record and undo like any other. **Everything is one undo step ("Perform setup").**
 
@@ -1228,8 +1233,8 @@ The pitch changes use the normal pad tuning, so pads play, record and undo like 
 
 ### Step by step: Keys
 
-1. On the MPC set **Settings > MIDI > Pad MIDI In = On**. **The MPC resets this at every start**, so set it every time. Make sure the right MIDI port is chosen.
-2. Set **Mode** to *Keys*.
+1. Pad MIDI In is turned on for you about 25 seconds after the MPC starts. The **Keys** row shows "PadIn on (boot)" when that worked. If it shows **FAILED**, set **Settings > MIDI > Pad MIDI In = On** by hand. Make sure the right MIDI port is chosen.
+2. Set **Mode** to *Keys*, or to *Arp+Keys* to play and arp together.
 3. **Keys** row: **K1** base note, **K2** span 16, 32 or 48.
 4. Play the keyboard. Notes become pad hits, and the stock app plays and records them.
 
@@ -1239,13 +1244,13 @@ DATA turn picks the row.
 
 | Row | K1 | K2 | K3 | S1 | S2 | S3 |
 |---|---|---|---|---|---|---|
-| Mode | Mode: Off, Scale, Chord, Arp, Keys | Bank | Octave | Apply | Take the last-hit pad as source | Go to the bank |
+| Mode | Mode: Off, Scale, Chord, Arp, Keys, Arp+Keys | Bank | Octave | Apply | Take the last-hit pad as source | Go to the bank |
 | Key | Root | Scale | Octave | | | |
 | Chord | Triads or 7ths | Diatonic or user | | | | |
 | Edit | Root | Shape | Pad | Save | Load | Reset |
 | Arp | Pattern | Rate | Gate | | | |
 | Arp 2 | Octaves | Latch | Chords | | | |
-| Keys | Base note | Span 16 / 32 / 48 | | | | |
+| Keys | Base note | Span 16 / 32 / 48 | Gate cut on / off | | | |
 
 On the Mode row the top bar shows S1 "Apply", and S3 shows "Bank". On the Edit row S3 shows "Reset". ERASE clears held arp pads.
 
@@ -1253,10 +1258,10 @@ On the Mode row the top bar shows S1 "Apply", and S3 shows "Bank". On the Edit r
 
 * A kit **overwrites the pads** it uses (Undo restores). Other layers on those pads are cleared.
 * The sample is assumed to be C. Pitches beyond plus or minus 48 semitones clamp.
-* **Gate** sets the recorded note length. One-shot drum pads **keep their tail**, so gate cuts the sound only on pads that allow it.
+* **Gate** (Keys row, K3 "cut") makes kit pads stop when their note ends, so it really cuts drum tails. It also applies to the arp gate. It is on by default; set it off to keep one-shot tails. In the lab a 4-second sample stopped after 0.33 s with Gate on.
 * **Arp works only while the current bank is the kit bank.**
-* **Keys and Arp are exclusive**: you cannot use both at once.
-* **Keys** needs Pad MIDI In On every boot. A USB keyboard was only tested through the lab's MIDI port, not on a real unit.
+* **Arp + Keys together:** keys on banks E to G, arp on bank H. The keyboard does not feed the arp, and both use one source sample.
+* **Pad MIDI In** is set at boot, so you normally do not set it. A USB keyboard was only tested through the lab's MIDI port, not on a real unit.
 * A chord apply writes about 180 values at once. This was fine in the emulator but not stress-tested on the unit.
 * In the Arp, the first note waits for the next grid step while playing.
 
@@ -1266,7 +1271,7 @@ On the Mode row the top bar shows S1 "Apply", and S3 shows "Bank". On the Edit r
 
 ### What it does
 
-A **multi-pass looper** synced to the sequence. Record a loop, overdub more passes (up to 8), undo a pass, change pass levels, and **export** the result to a pad or into the sequence. It records the **MPC's own output** (a resample of the master), so it hears your pads, sequence and anything else the MPC plays. The loop never records itself, so there is no feedback.
+A **multi-pass looper** synced to the sequence. Record a loop, overdub more passes (up to 8), undo a pass, change pass levels, and **export** the result to a pad or into the sequence. It records the **MPC's own output** (a resample of the master), the **line-in**, or both. It hears your pads, sequence and anything else the MPC plays. The loop never records itself, so there is no feedback.
 
 Two looper tiles exist:
 
@@ -1275,7 +1280,7 @@ Two looper tiles exist:
 
 ### Step by step
 
-1. Press **PLAY** so the sequence runs. **The looper only works while the transport plays.**
+1. Press **PLAY** so the sequence runs. **The looper only works while the transport plays**, unless **free-run** is on (see below).
 2. Open **KAOS TOOLS 2 > Loop Rec**.
 3. Turn **K1** (while the loop is empty) to choose the length: the sequence length, or 1, 2, 4 or 8 bars.
 4. Press **S1**. The state shows "WAITING FOR BAR 1", then "RECORDING" when the next loop boundary arrives.
@@ -1289,6 +1294,13 @@ Two looper tiles exist:
 9. Each export is **one undo step**.
 10. **ERASE twice** clears the loop.
 
+### Source and Run rows
+
+* **Source:** **K1** picks Master, Line-in or Master+In (both summed). **K2** picks the tap: **Pre** (before EQ, Color and Loudness, as in v0.29) or **Post** (after them). Post adds the loop playback after the chain, so it is not processed twice and not limited.
+* **Run:** **K1** turns **free-run** on or off. With free-run on, the loop keeps looping and recording when the transport stops, and a pass armed while stopped starts at once. **K2** turns **tempo stretch** on or off (on by default).
+
+Each relock to bar 1 is crossfaded, so it does not click.
+
 ### Controls
 
 | Control | Action |
@@ -1299,7 +1311,7 @@ Two looper tiles exist:
 | S1 | Record or Overdub. While armed: Disarm. While recording: stop after this pass |
 | S2 | Undo last pass. While recording: drop the running pass |
 | S3 | Mute or unmute the loop |
-| DATA turn | Pick a row: To pad, To Seq (this track), To Seq (NEW track) |
+| DATA turn | Pick a row: To pad, To Seq (this track), To Seq (NEW track), Source, Run |
 | DATA push | Run the row |
 | ERASE twice | Clear the loop |
 | SHIFT + DATA turn | Previous or next track (the track that gets the pad or note) |
@@ -1308,16 +1320,15 @@ Pads, transport and SHIFT combos pass through, so you can play pads into a pass.
 
 ### Tips and limits
 
-* **Records the master resample, not the line-in.** EQ, Loudness and master volume are **not baked in**.
-* **Needs the transport playing.** Stopping the transport stops the loop and drops a running pass.
-* **Tempo change:** the loop keeps its length in time, and the page warns **"tempo changed: re-record the loop"**.
-* Only **4/4** was tested.
+* **Master source:** records the master resample. With the **Pre** tap, EQ, Color and Loudness are **not** in the loop; with **Post** they are. Master volume is not baked in either way.
+* **Needs the transport playing** unless free-run is on. With free-run off, stopping the transport stops the loop and drops a running pass.
+* **Tempo change:** with tempo stretch on, the loop is time-stretched to the new tempo once the tempo has been steady for about 0.7 s (pitch is kept). Stretch works from half to double the original tempo. Outside that, or with stretch off, the page warns **"tempo changed: re-record the loop"**. Stretch was tested on tones and noise, not on real drum loops, and artefacts build up over many changes.
+* **Meters:** the loop length follows the bar length, so 3/4, 6/8, 5/4, 7/8, 12/8 and 2/4 work. 3/4 and 6/8 count the same way (the page shows 3/4 for both). A sequence that changes meter in the middle is not supported. Only constant meters were tested in the lab.
 * A pass starts within about one pulse of the boundary.
 * Max **8 passes** (fewer on long loops, to protect memory). Loops up to 16 bars at 60 BPM fit.
-* An export freezes the screen for **140 to 260 ms** and the loop relocks once afterwards (a tiny glitch in the loop output).
+* **Export does not stall.** The file is written in the background; the screen only waits for the short stock load step (about 17 ms for a 2-bar loop in the lab).
 * Exports are saved in `KAOSAMPLE/work` and in the project's data folder, named like `loop_<bars>b_<bpm>_<time>`. They are never overwritten. Free space is checked on the card and the internal storage.
 * Redo of a new-track export can fail when the stock history is full. Nothing is lost. Run the export again.
-* **Sample-record undo is not done.**
 
 ---
 
@@ -1327,10 +1338,11 @@ Pads, transport and SHIFT combos pass through, so you can play pads into a pass.
 
 * **Save as template:** keep the whole project, with all its kits, as a template on the card.
 * **New from template:** start a new project from a template. The template itself is never changed.
-* **Default template:** from a fresh project, builds a starter template from your first four kits (`KAOSAMPLE/kits`), at 90 BPM and 4 bars.
+* **Default template:** works from any project. A fresh project (2 tracks or fewer) builds a starter template from your first four kits (`KAOSAMPLE/kits`), at 90 BPM and 4 bars. Any other project is saved as it is, as `kaos-default`.
+* **Starter (STRIP):** on a fresh project, removes the stock starter kit and unused samples before the template is saved. In the lab the template went from about 81 MB to about 8.6 MB.
 * **New folder:** make a folder on the card or the internal storage, named like the Name row.
 * **Random project names:** an adjective plus a noun, such as "dusty-kick" or "warm-loop". It never reuses a name that is taken.
-* **Browser jump:** SHIFT + DATA jumps 5, 10 or 20 rows at a time in the file browsers.
+* **Browser jump:** SHIFT + DATA jumps 5, 10 or 20 rows at a time in the stock Sample Select, Project Select and FX Select lists.
 
 ### Step by step: save a template
 
@@ -1349,7 +1361,8 @@ Pads, transport and SHIFT combos pass through, so you can play pads into a pass.
 ### Step by step: other rows
 
 * **Folder row:** **K1** chooses where (KAOSAMPLE, Card Projects, Internal Projects). **S1** creates a folder named like the Name row.
-* **Browser row:** **K1** sets the jump size: off, 5, 10 or 20. Then, in the stock **Sample Select** and **Project Select** browsers, **SHIFT + DATA turn** jumps that many rows.
+* **Browser row:** **K1** sets the jump size: off, 5, 10 or 20. Then, in the stock **Sample Select**, **Project Select** and **FX Select** lists, **SHIFT + DATA turn** jumps that many rows.
+* **Starter row:** **K1** keeps the stock starter kit, or STRIPs it (see above).
 
 ### Controls
 
@@ -1361,19 +1374,20 @@ DATA turn picks the row.
 | Name | Style: random or from project | Roll another name | | |
 | Folder | Where: KAOSAMPLE, Card Projects, Internal Projects | Create folder | | |
 | Browser | Jump size: off, 5, 10, 20 | | | |
+| Starter | Keep or STRIP the stock starter kit | | | |
 
 The top bar shows S1 as Save, Roll, Create (depending on the row), S2 as "New" and S3 as "Default" on the Template row.
 
 ### Tips and limits
 
-* **A template is a full copy**: about **90 MB** each with the stock starter kit, and about the same again for the new project. The layer refuses when space is short, but it **never deletes your old projects**.
+* **A template is a full copy**: about **90 MB** with the stock starter kit, or about **9 MB** with STRIP. A new project made from it is about the same size again. The layer refuses when space is short, but it **never deletes your old projects**.
 * New from template **restarts the app** and **replaces the open project**. The old one is kept as a `kaos-prev` copy and a safety snapshot. There is no "unsaved?" check. **Save first.**
 * **Safety (v0.30.1):** New from template refuses unless the app is healthy. It keeps a safety copy of the new project's samples on the card (in `KAOSAMPLE/safety`) and repairs the project after the restart if the stock app drops sample files. Old safety copies are pruned (the newest 2 are kept). In the lab, the stock app once deleted sample files from a swapped-in project, for a reason nobody has found yet. **The template folder on the card is never touched, so it is the copy to trust.**
 * If the app had already fallen back to stock (two quick exits), the layer is not running after the restart and the job cannot finish.
 * Template names must pass the stock editor: lowercase letters, digits, and `- . #`. Typing costs about 0.8 seconds per character, so names stay short.
-* Jump works only in the stock **Sample Select** and **Project Select** browsers. Other pickers (Sample Save/Export folder chooser, SD Card Access) are not covered.
-* **Remember the last folder** after a restart is not done. The stock app does remember the folder per browser while it runs.
-* **Default template** needs a fresh project (2 tracks or fewer) and kits laid out as `KAOSAMPLE/kits/<kit>/<kit>.xpm`.
+* Jump works in the stock **Sample Select**, **Project Select** and **FX Select** lists. Other pickers (Sample Save/Export folder chooser, SD Card Access) are not covered.
+* **Remember the last folder across a restart is not possible.** The stock app never saves it, and replaying key presses at start-up is not safe.
+* **Default template** works from any project. Only a fresh project (2 tracks or fewer) gets the card kits, which must be laid out as `KAOSAMPLE/kits/<kit>/<kit>.xpm`.
 * **Kits on the card:** KAOSAMPLE can load a kit from `KAOSAMPLE/kits/<name>/` onto a new track (all 16 pads). (check on device) which page has the load command; the notes only say it is the same kit loader that Default template uses.
 
 ---
@@ -1438,16 +1452,19 @@ KAOSAMPLE uses two places on the SD card.
 | `templates/` | One folder per template: `<name>.xpj`, `<name>_[ProjectData]/` (all WAVs) and `template.info`. A folder without `template.info` is an unfinished copy and is not listed. | Files |
 | `work/` | New WAV files made by the tools: fade copies (`name_fadeN.wav`), mono copies (`name_mono.wav`), and loop exports (`loop_<bars>b_<bpm>_<time>.wav`). | Sample tools, Clean Up, Looper |
 | `grooves/` | Saved grooves, `<sample name>.grv`, plain text. | Groove |
-| `chords/` | Your own chord sets, one file per sequence (`S<n>.chd`). | Perform |
+| `chords/` | Your own chord sets, one file per sequence (`S<n>.chd`). A copy also travels in the project sidecar. | Perform |
 | `safety/` | Safety copies of a new project's samples made by New from template. The newest 2 are kept. | Files |
+| `sidecars/` | Card copies of each project's sidecar (mute scenes, slices, chord sets). They come back when the project loads. | Automatic |
 
 ### Files
 
 | File | What it is |
 |---|---|
 | `fx.txt` | Saved settings: master EQ, Loudness, and the Color, Duck and Reference-file-name lines. Written about 2 seconds after a change. |
-| `slices.txt` | Your chop slice sets. 24 are kept. |
-| `mutes.txt` | Mute scenes and recorded mutes. |
+| `fxundo.txt` | The Color undo history (32 steps). It comes back after a restart. |
+| `usb-probe.txt` | A one-time USB probe. It is written once. |
+| `slices.txt` | Your chop slice sets. 24 are kept. A copy also travels in the project sidecar. |
+| `mutes.txt` | Mute scenes and recorded mutes. A copy also travels in the project sidecar. |
 | `files-pending.txt`, `files-safety.txt` | Short-lived notes used during New from template. They vanish when the job ends. |
 | `layer-events.log` | When the app started and exited, and the exit codes. **Send in bug reports.** |
 | `layer-last-exit.log` | What was happening at the last exits and crashes. **Send in bug reports.** |
@@ -1456,7 +1473,7 @@ KAOSAMPLE uses two places on the SD card.
 | `crash-last.txt` | Written after a crash with the details. Send it too if it exists. |
 | `device-content.txt` | A one-time listing of files on the MPC, made for Omar. Not needed for bug reports. |
 
-Things that live **in the project** and travel with it: pad sounds, step edits, inserts, tempo, extracted slices (as start and end settings). Things that live **only on the card**: slice sets, mute scenes, recorded mutes, grooves, chord sets, settings in `fx.txt`.
+Things that live **in the project** and travel with it: pad sounds, step edits, inserts, tempo, extracted slices (as start and end settings), and the sidecar file `kaos-sidecar.txt` (mute scenes, recorded mutes, slice sets, chord sets). Things that live **only on the card**: grooves, settings in `fx.txt`, the Color undo in `fxundo.txt`. The copies in `sidecars/` are the card copies of the sidecars.
 
 ---
 
@@ -1473,17 +1490,18 @@ Things that live **in the project** and travel with it: pad sounds, step edits, 
 | Stock message "Sample not found" with ABORT and RESOLVE after a restore | The restored project is missing samples. This is the stock message. |
 | A red "Command failed" box appears and the buttons stop working | Press SCREEN 1, 2 or 3 to clear it. Avoid redo (SHIFT + PLUS) past a track create. |
 | "Cannot undo - Delete Track" or "Redo not possible" | These are on purpose. Track create and delete cannot be undone. Use Snapshots. |
+| Undo says "tap the pad to stop first" on the Sample Record screen | A recording is still armed or running. Tap a pad to stop it, wait about 1.2 s, then undo. If it was armed and never triggered, leave the screen and come back. |
 | Delete track says "kit shared with N track(s)" | Save and reload the project, then delete again. |
-| Keys mode plays nothing | On the MPC set Settings > MIDI > Pad MIDI In = On. It resets every start. Check the MIDI port. |
+| Keys mode plays nothing | Look at the Keys row. "PadIn on (boot)" means Pad MIDI In is on. If it says "FAILED", set Settings > MIDI > Pad MIDI In = On by hand. Check the MIDI port. |
 | Arp does nothing | The current bank must be the kit bank, and the mode must be Arp. |
-| Looper says "WAITING FOR PLAY" | Press PLAY. The looper only runs while the transport plays. |
-| Looper says "tempo changed: re-record the loop" | You changed the tempo after recording. Record the loop again. |
+| Looper says "WAITING FOR PLAY" | Press PLAY. The looper only runs while the transport plays, unless free-run is on (Run row, K1). |
+| Looper says "tempo changed: re-record the loop" | The new tempo is outside half to double the original, or tempo stretch is off (Run row, K2). Turn stretch on, or record the loop again. |
 | Stems do not add up to the master | Bypass the stock Color Compressor first (4.11). Do not mix offline and real-time files. |
 | Stems refuse to start | Not enough card space, or a stock export named "Song" is sitting in the Export folder. Free space, or move that file. |
 | Auto-kit put a hit in the wrong group | Normal at about 82 to 88% accuracy. Fix it in the preview with K1 before you commit. |
 | Reference A/B says "load a reference first" | Put WAVs in `KAOSAMPLE/refs`, pick one on the Ref row, push DATA to load, then press S1. |
 | Reference sounds quieter or louder than expected | The loudness meter needs a few seconds of music. Look for "peak cap" on the page, and try the Trim knob. |
-| Color knob zippers a little | Known. Move the knob slowly. |
+| Color knob clicks or zippers on a fast sweep | v0.32 glides Color settings. A very fast sweep is softened on purpose. Tell Omar if it still happens. |
 | Track count stops at 32 | That is the maximum. |
 | Out of memory, slowdowns, or dropouts | Use Clean Up: purge unused samples and make near-mono samples mono. Close heavy pages. Check About for CPU, RAM and Xrun. |
 | A save-version name looks odd | The stock editor allows only lowercase letters, digits, dash, dot, hash and space. Names are changed to fit. |
@@ -1526,7 +1544,8 @@ These are walls of the platform, not bugs to be fixed later.
 * **No per-track audio.** There is no per-track kill EQ or processing. Stems are made by muting tracks and rendering.
 * **No extra memory.** The unit has no swap and no compressed RAM, so memory cannot be stretched. Track count and loop memory are bounded by the real RAM. **32 tracks maximum.** 48 or 64 tracks are not offered until the real RAM size is confirmed from `mem-probe.txt`.
 * **No licensing bypass.** KAOSAMPLE does not touch licensing or the boot chain. Features that the stock product locks (for example keygroup programs and MIDI tracks) stay unavailable.
-* **The stock app owns undo.** Track create cannot be undone. Delete track cannot be undone. Explode is only partly undoable. EQ, Loudness, Color and Duck settings are not in the stock undo list (Color has its own 32-step undo that is lost at restart). Recording a sample cannot be undone yet.
+* **The stock app owns undo.** Track create cannot be undone. Delete track cannot be undone. Explode is only partly undoable. EQ, Loudness, Color and Duck settings are not in the stock undo list (Color has its own 32-step undo, kept across restarts). Sample recording can be undone on the Sample Record screen.
+* **No remembered browser folder.** The stock app stores no last-folder state, so the file browsers cannot pick up the last folder after a restart.
 
 ## 7.2 Beta status
 
@@ -1539,13 +1558,13 @@ These are walls of the platform, not bugs to be fixed later.
 |---|---|
 | Master EQ | Master only, no per-track EQ |
 | Loudness | Not in undo. Skipped by offline stem renders |
-| Color / Duck / Reference | Loudness meter is LUFS-style, not certified. Duck sources are one track's notes and live pad hits only (not the arp, MIDI input or other tracks). Knob zipper on fast sweeps. Reference list max 48 files. Color undo is lost at restart |
+| Color / Duck / Reference | Loudness meter is LUFS-style, not certified. Duck sources: notes of a set of tracks, live pad hits, MIDI in and arp / Perform hits (each switchable). Very fast sweeps are softened on purpose. Reference list max 48 files |
 | Undo | History holds about 512 steps. Several actions cannot be undone (7.1) |
 | Snapshots | 30 kept. Restore needs about 2 minutes of app uptime. About 35 to 40 seconds of black screen |
 | Step edit | 4/4 only. Quantize snaps to 1/16. Selection 256 notes. Bar tools refuse tracks over 4000 events. Grid shows 512 events per track |
-| Track tools | Delete not undoable. Delete refuses a shared-kit track. Solo is per kit. Mute scenes and recorded mutes live on the card. Pad mutes record for the current track only |
+| Track tools | Delete not undoable. Delete refuses a shared-kit track. Solo is per kit. Mute scenes and recorded mutes are saved with the project and on the card. Pad mutes record for the current track only |
 | Explode | Only partly undoable. Counts toward 32 tracks |
-| Sample tools | Slice sets live on the card (24 kept). Extract writes layer 1 only. Tail is a loop tail, not a fade. 128 slices max |
+| Sample tools | Slice sets are saved with the project and on the card (24 kept). Extract writes layer 1 only. Tail is a loop tail, not a fade. 128 slices max |
 | Pad Sound | Drum tracks only. Release may be silent on drum pads. Choke has 4 slots. No effect parameters. Undo of an insert is unreliable |
 | Stems | Fixed 3 second stock tail. Offline skips EQ and Loudness. Offline and real-time differ by about 4 dB. Track mutes can stay changed if the app is killed |
 | Song to Seq | 4/4 only. Needs an empty sequence slot. Max 4000 events per track, 40,000 total, 999 bars |
@@ -1553,9 +1572,9 @@ These are walls of the platform, not bugs to be fixed later.
 | Groove | Whole track only. Grid fixed at 1/16. Loop must be exactly 1 or 2 bars. Tested only on test loops |
 | Retro Rec | Pad hits only. Refuses while recording. 4/4 assumed. Save version tuned on the emulator |
 | Clean up | Purge needs drum programs only. RAM saving is an estimate. Make mono works on one program at a time |
-| Perform | Arp only in the kit bank. Arp and Keys cannot be on together. Keys needs Pad MIDI In = On at every start. Gate does not cut drum tails. USB keyboard path not yet tested on a real unit |
-| Looper | Records the master only, not the line-in. Needs the transport playing. 4/4 only. 8 passes max. Export blocks the screen for 140 to 260 ms |
-| Files | Templates are about 90 MB each. New from template restarts the app and replaces the open project. Jump works in two stock browsers only. The last folder is not remembered after a restart |
+| Perform | Arp only in the kit bank (bank H with Arp+Keys). Keys on banks E to G at span 48. The keyboard does not feed the arp. Pad MIDI In is set at boot; "FAILED" means set it by hand. Gate is on by default. USB keyboard path not yet tested on a real unit |
+| Looper | Master, line-in or both. Pre or post tap. Needs the transport unless free-run is on. Stretch 0.5x to 2x, tested on tones (not drum loops). Meter changes mid-sequence not supported. 8 passes max. Line-in hardware levels and latency untested |
+| Files | Templates are about 90 MB with the stock starter kit, about 9 MB with STRIP. New from template restarts the app and replaces the open project. Jump works in three stock lists. The last folder is not remembered after a restart (the stock app never saves it) |
 | Monitor | Battery reading unverified |
 
 ## 7.4 What is not in this build

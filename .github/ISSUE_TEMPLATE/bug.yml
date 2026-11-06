@@ -1,0 +1,25 @@
+name: Bug report
+description: Something crashed or didn't work
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: {label: KAOSAMPLE version, placeholder: v0.31}
+    validations: {required: true}
+  - type: textarea
+    id: what
+    attributes: {label: What were you doing?, description: Which screen/tile, which buttons, what happened vs what you expected.}
+    validations: {required: true}
+  - type: input
+    id: when
+    attributes: {label: Time it happened (MPC clock), placeholder: "2026-11-06 21:15"}
+  - type: textarea
+    id: logs
+    attributes: {label: Logs, description: "Drag in layer-events.log, layer-last-exit.log, layer-app.log, mem-probe.txt from the card's KAOSAMPLE folder."}
+  - type: checkboxes
+    id: fw
+    attributes:
+      label: Checks
+      options:
+        - label: My MPC Sample is on firmware 1.3.0.12
+          required: true

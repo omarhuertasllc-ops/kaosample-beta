@@ -6,7 +6,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
+* **Latest build: v0.35** (MPC Mode, merged) on top of **v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
 * **v0.33** is the build on the test card (v0.30.1 ran 70 min on hardware with no crash).
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
@@ -21,6 +21,24 @@ These are walls of the platform, not bugs to be fixed later.
 * **No swap and no zram.** The device kernel is built without swap and compressed RAM, so RAM cannot be stretched. Track count and loop memory are bounded by real RAM (32 tracks shipped).
 * **No licensing bypass.** The layer does not touch licensing or the boot chain. Features gated by the stock product (for example keygroup programs and MIDI tracks) stay out of reach.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
+
+---
+
+## v0.35 — MPC Mode (2026-11-07, merged; emulator-tested, not run on hardware)
+
+A **MAIN VOLUME knob mode**, three **pad-grid edit menus**, three new **themes** and a **Remap page with presets**. Version line: KAOSAMPLE v0.35.
+
+* **Volume knob (settings file `KAOSAMPLE/mpc.txt`, `volknob=`).** The knob arrives at the layer as panel CC 19. Modes: **Output** (stock: the knob stays the stock software volume), **Master fader** (the layer swallows the knob and drives the master fader of the Ch. Mixer, the layer master on Out 1/2) and **Both**. Soft takeover (the fader does not jump; the knob has to reach it first), slewed in 0.04 steps at >= 25 ms (no zipper). The master is remembered across restarts. The stock Out 1/2 track volume and the project `mixer.volume` cell were both tried first and are inaudible on this unit.
+* **Edit menus: Track / Sequence / Program Edit as 4x4 grids matching the pads** (KAOS TOOLS 2 > MPC Edit, tile 14, or three new remap actions; inside a menu S1 / S2 / S3 switch menu). Press a pad to run, K1-K3 set the values, DATA pushes. Track: Clear, Explode, Double / Half Speed, Humanize, Random Events, Split Events, Pitch Quantize, Copy Track, Bounce to Sample, To Progression, Transpose. Sequence: Erase, Clear, Transpose, Insert Bars, Remove Bars, Half / Double Length, Copy Sequence, Copy Bars, Copy Events. Program: Duplicate, Flatten Pad, Copy Pads, Merge Programs, Pad Note Map, Pad Color, Save Program, Save Sample.
+* **One stock undo step per action, or a refusal.** Everything that edits notes, bars, pads or the note map is one stock undo group. Actions the stock history cannot undo (they add a track or a sequence slot, or write a plain field: Copy Track, Explode, Duplicate Program, Copy Sequence, Pad Color) say so on the first press and run on a second press within 15 s. Copy Track, Duplicate Program and Bounce to Sample refuse under 250 MB of free memory; Save Program refuses when the card cannot hold the kit.
+* **Themes One / 2000 / Renaissance** (own palettes, own pixel font, no Akai art): all layer pages and the edit menus; the stock screens stay untouched. One: red top bar with BPM / bar / beat. 2000: green-grey LCD, dark ink, block font, K1-K3 soft-key bar. Renaissance: black / charcoal, silver, red accents. They sit after MPC Live in the existing Theme toggle. A theme change asks "keep my remap / use the theme's preset".
+* **Remap page** (icon menu page 2, "Remap"): the four combos plus a **Preset** row (Stock, MPC One feel, 2000 feel, Renaissance feel), K1 picks, S3 applies, saved to `remap.txt`.
+* **Fixed on the way:** the stock Set-Pad-Note-Map call takes a one-word scope object (the Project), not the command factory; the first version crashed the app (SIGSEGV, exit 139). "Delete Bars" undo was refused by the layer's own track-delete guard because of its name (now "Remove Bars"). Double Length and Copy Events / Copy Track skipped every note (stale length cache, source notes counted as occupants).
+* Limits: Flatten Pad: one undo step brings the original sample back, but the trim marks revert to the full sample. Bounce to Sample needs notes on the track and a pad (K1: first empty pad, or a pad you name). Hardware untested.
+
+**Status**
+* Emulator only (QEMU lab, Mac mini). **Hardware untested.** Not merged.
+* Checked: host tests (mpcedit 15,300, skin 32,439, volknob 40,069 checks, 0 fail; the older suites rerun clean); every menu action run from the lab and undone, themes / remap presets / preset prompt on screen, 10.8 min soak. Evidence and numbers in `design/v035.md`.
 
 ---
 
@@ -118,7 +136,7 @@ Limits:
 * Born from a lab case where the stock app deleted sample files from a swapped-in project. The exact cause is not understood. The template folder on the card is never touched, so it is the copy to trust.
 * The relaunch takes about 35 to 40 seconds of black screen.
 
-Status: emulator-tested. On the test card for testing. In main.
+Status: emulator-tested. On Omar's card for testing. In main.
 
 ## v0.30 — Files + Templates (2026-11-05)
 

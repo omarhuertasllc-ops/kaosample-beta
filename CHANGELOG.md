@@ -6,7 +6,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.35.1** (USB audio hotfix, not merged) on top of **v0.35** (MPC Mode, merged) on top of **v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
+* **Latest build: v0.37** (Unified, not merged) on top of **v0.36** (Studio 1, not merged) and **v0.35.1** (USB audio hotfix, not merged) on top of **v0.35** (MPC Mode, merged) on top of **v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
 * **v0.33** is the build on the test card (v0.30.1 ran 70 min on hardware with no crash).
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
@@ -23,6 +23,17 @@ These are walls of the platform, not bugs to be fixed later.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
 
 ---
+
+## v0.36 — Studio 1 (2026-11-07, branch v036-studio, not merged; emulator-tested, not run on hardware)
+
+A web app served by the layer over the USB network cable (the MPC side `usb0`, 192.168.155.1, TCP port 8077). Open `http://192.168.155.1:8077/` in iPad Safari or Mac Safari / Chrome (add to home screen works). Design, evidence and the stock `usb0` findings: `design/v036.md`.
+
+* **Live screen**: the 320x240 display as dirty-tile frames (16x16 tiles, RLE or raw), 30 fps while it moves, down to 5 fps when still, nearest-neighbour scaling.
+* **Touch panel**: K1-K3 (drag), DATA wheel (drag around, or scroll) and DATA push, every panel button (SHIFT latches on a tap, holds on a long press), Overdub (SHIFT + REC), SCREEN 1-3; sent through the layer's own control-surface FIFO, so the app sees the same bytes as from the hardware.
+* **Pads**: 4x4 with velocity from the touch position (pen pressure when there is one), bank A-H (taps PAD BANK until the bank LED says so).
+* **Transport + readouts**: Play / Stop / Rec / Overdub, BPM, bar.beat.tick, sequence, track.
+* **Studio link On / Off** on the first KAOS menu (icon menu tile 14, the old iPad slot; the list menu line too), shows Off / On / Linked; saved in `KAOSAMPLE/studio.txt`.
+* Binds only 192.168.155.1, own low-priority thread (nice 10), nothing runs without a client, own design (no Akai art or fonts). Host test `test/studio_test.c` (130,864 checks).
 
 ## v0.35.1 — USB audio hotfix (2026-11-07, branch v0351-usbaudio, not merged; emulator-tested, not run on hardware)
 

@@ -6,7 +6,7 @@ Newest version first. Most tools live under SHIFT+SCREEN 3 > KAOS TOOLS > More >
 
 ## Current status
 
-* **Latest build: v0.35** (MPC Mode, merged) on top of **v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
+* **Latest build: v0.35.1** (USB audio hotfix, not merged) on top of **v0.35** (MPC Mode, merged) on top of **v0.34** (Export + Sync, merged) on top of **v0.33** (Finder + Ideas, merged) on top of **v0.32** (audio / perform and files / undo / persistence, merged) on top of v0.31.1 (menu audit) and v0.31 (Color, Duck, Reference). Emulator-tested.
 * **v0.33** is the build on the test card (v0.30.1 ran 70 min on hardware with no crash).
 * **Hardware tested through v0.20 only.** Everything from v0.21 up has been tested in the emulator (QEMU lab) and has not run on the real unit yet.
 * Every version below says which of three states it is in: emulator-tested, on hardware, or not merged.
@@ -23,6 +23,15 @@ These are walls of the platform, not bugs to be fixed later.
 * **The stock app owns undo.** Track create cannot be undone by the stock history, and layer DSP settings (EQ, Loudness, Color) are not in the stock undo list.
 
 ---
+
+## v0.35.1 — USB audio hotfix (2026-11-07, branch v0351-usbaudio, not merged; emulator-tested, not run on hardware)
+
+Omar: USB audio from the unit sounded distorted with KAOSAMPLE and clean on the stock app.
+
+* **Cause.** The stock app runs two playback streams on different threads: the main output and its USB gadget (UAC2) bridge. `snd_pcm_writei` in the layer ran the whole master chain on every playback stream with 2 or more channels. That chain (EQ, Color, Loudness, master gain ramp, looper, taps, meter) keeps its state in statics (`g`, `tmp[]`, filter memories) and is not thread safe, so with an effect on the two streams corrupted each other. The gadget's hw_params also retuned the chain's sample rate (44100).
+* **Fix.** `pcmclass.c` tells the gadget (any of device name, PCM name, card id, card name contains UAC2 / gadget) from the main output; the first non-gadget playback device is the main output (found by card + device + subdevice, so a reopened main stays main). Only the main output gets the chain, the taps and the meter; every other stream goes straight to the real `snd_pcm_writei` with the app's own buffer, and no longer counts as an xrun of the main output. A gadget capture stream is no longer given to the looper tap. The hw_params of other streams no longer retune the chain.
+* **Proof (lab).** With Color + Loudness on and the transport playing, a second playback stream (a thread calling the hooked `snd_pcm_writei` into `hw:Loopback,0,1`, read back from `hw:Loopback,1,1`): v0.35 behaviour (build flag `KAOS_PCM_NOGATE`) 0 of 1,633,044 samples equal; fixed build 1,633,088 of 1,633,088 equal (bit-identical), the main output still runs the chain. Host test `test/pcmclass_test.c`, lab `test/lab/usbaudio0351.py`, soak `test/lab/soak0351.py`. See the numbers in design/v0351.md.
+* Lab triggers: `pcmstat` (role, counters, hash per stream), `pcmhash 1|0`, `pcmforce 1|0`, `pcmtwin <s>`.
 
 ## v0.35 — MPC Mode (2026-11-07, merged; emulator-tested, not run on hardware)
 
